@@ -25,7 +25,7 @@ func checkMove(c *model.Client, msg model.WebsocketMessage) (bool, string) {
 	case model.King:
 		return checkKingMove(x1, y1, x2, y2, color, checkerBoard)
 	case model.Queen:
-
+		return checkQueenMove(x1, y1, x2, y2, color, checkerBoard)
 	case model.Rook:
 
 	case model.Bishop:
@@ -55,7 +55,7 @@ func checkKingMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, 
 	}
 
 	//王车易位
-	if checkerBoard.Checkerboard[x2][y2][0] == model.Rook && checkerBoard.Checkerboard[x2][y2][1] == color && checkerBoard.Checkerboard[x1][y1][4] == 0 && checkerBoard.Checkerboard[x2][y2][4] == 0 {
+	if checkerBoard.Checkerboard[x2][y2][0] == model.Rook && checkerBoard.Checkerboard[x2][y2][1] == color && checkerBoard.Checkerboard[x1][y1][4] == 0 && checkerBoard.Checkerboard[x2][y2][4] == 0 && checkerBoard.Checkerboard[x2][y2][flag] == 0 && checkerBoard.Checkerboard[x1][x1][flag] == 0 {
 		direction := 1 //易位方向判断
 		if y2 < y1 {
 			direction = -1
@@ -77,32 +77,46 @@ func checkKingMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, 
 	return true, ""
 }
 
-func checkQueenMove(x1, y1, x2, y2 int) (bool, string) {
+func checkQueenMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, string) {
+	var flag = returnFlag(color)
+	dx := x2 - x1
+	dy := y2 - y1
+
+	if dx == 0 || dy == 0 || abs(dx) == abs(dy) { // 判断是否沿水平、垂直或对角线移动
+		stepX := 0
+		if dx != 0 {
+			stepX = dx / abs(dx) // 确定 x 方向
+		}
+
+		stepY := 0
+		if dy != 0 {
+			stepY = dy / abs(dy) // 确定 y 方向
+		}
+
+		x := x1 + stepX
+		y := y1 + stepY
+
+		for x != x2 || y != y2 {
+			if checkerBoard.Checkerboard[x][y][0] != 0 {
+				return false, "移动路径被阻挡"
+			}
+
+			x += stepX
+			y += stepY
+		}
+
+		if checkerBoard.Checkerboard[x2][y2][0] != 0 && checkerBoard.Checkerboard[x2][y2][1] == color {
+			return false, "目标位置存在己方棋子"
+		}
+
+		tempBoard := copyChessBoard(checkerBoard)
+		// 执行临时移动。
+		tempBoard.Checkerboard[x1][y1][0], tempBoard.Checkerboard[x2][y2][0] = model.Void, tempBoard.Checkerboard[x1][y1][0]
+		tempBoard.Checkerboard[x1][y1][1], tempBoard.Checkerboard[x2][y2][1] = model.Void, tempBoard.Checkerboard[x1][y1][1]
+		CalculateThreaten(color, &tempBoard)
+		if tempBoard.Checkerboard[tempBoard.King[color][0]][tempBoard.King[color][1]][flag] == 1 {
+			return false, "王有威胁"
+		}
+	}
 	return true, ""
-}
-
-// 对马撇脚的计算
-func isBlocked(x, y int, offset []int, checkerBoard *model.Chess) bool {
-	blockerX, blockerY := 0, 0
-
-	if offset[0] > 1 {
-		blockerX = x + 1
-	} else if offset[0] < -1 {
-		blockerX = x - 1
-	} else {
-		blockerX = x
-	}
-
-	if offset[1] > 1 {
-		blockerY = y + 1
-	} else if offset[1] < -1 {
-		blockerY = y - 1
-	} else {
-		blockerY = y
-	}
-
-	if blockerX >= 0 && blockerX <= 7 && blockerY >= 0 && blockerY <= 7 {
-		return checkerBoard.Checkerboard[blockerX][blockerY][0] != 0
-	}
-	return false
 }

@@ -125,9 +125,7 @@ func calculateKnight(x, y, flag int, checkerBoard *model.Chess) {
 	for _, o := range offsets {
 		newX, newY := x+o[0], y+o[1]
 		if newX >= 0 && newX <= 7 && newY >= 0 && newY <= 7 {
-			if !isBlocked(x, y, o, checkerBoard) {
-				checkerBoard.Checkerboard[newX][newY][flag] = 1
-			}
+			checkerBoard.Checkerboard[newX][newY][flag] = 1
 		}
 	}
 }
