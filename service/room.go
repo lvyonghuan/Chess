@@ -57,6 +57,7 @@ func initCheckerBoard(checkerBoard *model.Chess) {
 			for j := 0; j < 8; j++ {
 				if j == 0 || j == 7 {
 					checkerBoard.Checkerboard[i][j][0] = model.Rook
+					checkerBoard.Checkerboard[i][j][4] = 0
 				} else if j == 1 || j == 6 {
 					checkerBoard.Checkerboard[i][j][0] = model.Knight
 				} else if j == 2 || j == 5 {
@@ -65,6 +66,7 @@ func initCheckerBoard(checkerBoard *model.Chess) {
 					checkerBoard.Checkerboard[i][j][0] = model.Queen
 				} else if j == 4 {
 					checkerBoard.Checkerboard[i][j][0] = model.King
+					checkerBoard.Checkerboard[i][j][4] = 0
 				}
 				if i == 0 {
 					checkerBoard.Checkerboard[i][j][1] = model.White

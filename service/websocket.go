@@ -109,7 +109,15 @@ func Read(c *model.Client) {
 					log.Println("局都还没开")
 					continue
 				}
-				//TODO：检查合法性
+				if c.UserClient.Room.NextStep != c.UserClient.Color {
+					log.Println("急什么")
+					continue
+				}
+				isLegitimate, errStr := checkMove(c, msg)
+				if !isLegitimate {
+					log.Println(errStr)
+				}
+				//TODO:移动
 			}
 		default:
 			log.Println("不支持的消息类型")
