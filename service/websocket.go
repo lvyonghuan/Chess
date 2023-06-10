@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
+	"sync"
 )
 
 var Upgrade = websocket.Upgrader{
@@ -42,16 +43,17 @@ func ConnectRoom(token string, roomID int, c *gin.Context) error {
 	}
 	var userClient model.UserClient
 	client.UserClient = &userClient
+	client.UserClient.Client = &sync.Map{}
 	userClient.Register = make(chan *model.Client)
 	userClient.Unregister = make(chan *model.Client)
 	userClient.User = user
 	userClient.Room = room
 	userClient.IsReady = false
 	//用户填入房间
-	if room.PlayerA != (model.UserClient{}) {
+	if room.PlayerA == (model.UserClient{}) {
 		userClient.Color = model.White
 		room.PlayerA = userClient
-	} else if room.PlayerB != (model.UserClient{}) {
+	} else if room.PlayerB == (model.UserClient{}) {
 		userClient.Color = model.Black
 		room.PlayerB = userClient
 	} else {
@@ -117,7 +119,7 @@ func Read(c *model.Client) {
 				if !isLegitimate {
 					log.Println(errStr)
 				}
-				//TODO:移动
+				move(msg, c)
 			}
 		default:
 			log.Println("不支持的消息类型")

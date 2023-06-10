@@ -23,7 +23,7 @@ func CreateRoom(c *gin.Context) {
 // ConnectRoom 建立websocket链接
 func ConnectRoom(c *gin.Context) {
 	token := c.GetHeader("Authorization")
-	roomIDStr := c.PostForm("room_id")
+	roomIDStr := c.Query("room_id")
 	roomID, err := strconv.Atoi(roomIDStr)
 	if err != nil {
 		log.Println(err)

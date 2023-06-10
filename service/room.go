@@ -17,6 +17,9 @@ func InitRoom(token, roomName string, c *gin.Context) (roomNumber int, err error
 	}
 	var room model.Room
 	room.RoomName = roomName
+	room.PlayerA = model.UserClient{}
+	room.PlayerB = model.UserClient{}
+	room.ReadyNum = 0
 	crateRoom(&room)
 	//白棋先走
 	room.NextStep = model.White
