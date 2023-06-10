@@ -30,7 +30,14 @@ func CalculateThreaten(color int, checkerBoard *model.Chess) {
 				calculateQueen(i, j, flag, checkerBoard)
 			case model.Rook:
 				calculateRock(i, j, flag, checkerBoard)
-
+			case model.Bishop:
+				calculateBishop(i, j, flag, checkerBoard)
+			case model.Knight:
+				calculateKnight(i, j, flag, checkerBoard)
+			case model.Pawn:
+				calculatePawn(i, j, flag, checkerBoard.Checkerboard[i][j][1], checkerBoard)
+			default: //空格
+				continue
 			}
 		}
 	}
@@ -165,6 +172,135 @@ func calculateRock(x, y, flag int, checkerBoard *model.Chess) {
 		checkerBoard.Checkerboard[x][j][flag] = 1
 		if checkerBoard.Checkerboard[x][j][0] != 0 {
 			break
+		}
+	}
+}
+
+func calculateBishop(x, y, flag int, checkerBoard *model.Chess) {
+	//向下遍历
+	var (
+		flagXl = true //左
+		flagXr = true //右
+		i      = x - 1
+		j      = y - 1
+		k      = y + 1
+	)
+	for ; i >= 0; i-- {
+		if j >= 0 {
+			if flagXl {
+				checkerBoard.Checkerboard[i][j][flag] = 1
+			}
+			if checkerBoard.Checkerboard[i][j][0] != 0 && flagXl {
+				flagXl = false
+			} else if flagXr {
+				j -= 1
+			}
+		}
+		if k <= 7 {
+			if flagXr {
+				checkerBoard.Checkerboard[i][k][flag] = 1
+			}
+			if checkerBoard.Checkerboard[i][k][0] != 0 && flagXr {
+				flagXr = false
+			} else if flagXr {
+				k += 1
+			}
+		}
+	}
+	//向上遍历
+	flagXr = true
+	flagXl = true
+	i = x + 1
+	j = y - 1
+	k = y + 1
+	for ; i <= 7; i++ {
+		if j >= 0 {
+			if flagXl {
+				checkerBoard.Checkerboard[i][j][flag] = 1
+			}
+			if checkerBoard.Checkerboard[i][j][0] != 0 && flagXl {
+				flagXl = false
+			} else if flagXr {
+				j -= 1
+			}
+		}
+		if k <= 7 {
+			if flagXr {
+				checkerBoard.Checkerboard[i][k][flag] = 1
+			}
+			if checkerBoard.Checkerboard[i][k][0] != 0 && flagXr {
+				flagXr = false
+			} else if flagXr {
+				k += 1
+			}
+		}
+	}
+}
+
+func calculateKnight(x, y, flag int, checkerBoard *model.Chess) {
+	var (
+		xAdd2    = x+2 <= 7
+		xAdd1    = x+1 <= 7
+		xReduce2 = x-2 >= 0
+		xReduce1 = x-1 >= 0
+		yAdd2    = y+2 <= 7
+		yAdd1    = y+1 <= 7
+		yReduce2 = y-2 >= 0
+		yReduce1 = y-1 >= 0
+	)
+	if xAdd2 {
+		if yAdd1 {
+			checkerBoard.Checkerboard[x+2][y+1][flag] = 1
+		}
+		if yReduce1 {
+			checkerBoard.Checkerboard[x+2][y-1][flag] = 1
+		}
+	}
+	if xAdd1 {
+		if yAdd2 {
+			checkerBoard.Checkerboard[x+1][y+2][flag] = 1
+		}
+		if yReduce2 {
+			checkerBoard.Checkerboard[x+1][y-2][flag] = 1
+		}
+	}
+	if xReduce1 {
+		if yAdd2 {
+			checkerBoard.Checkerboard[x-1][y+2][flag] = 1
+		}
+		if yReduce2 {
+			checkerBoard.Checkerboard[x-1][y-2][flag] = 1
+		}
+	}
+	if xReduce2 {
+		if yAdd1 {
+			checkerBoard.Checkerboard[x-2][y+1][flag] = 1
+		}
+		if yReduce1 {
+			checkerBoard.Checkerboard[x-2][y-1][flag] = 1
+		}
+	}
+}
+
+func calculatePawn(x, y, flag, color int, checkerBoard *model.Chess) {
+	//反正white在下面
+	if color == model.White {
+		if x+1 <= 7 {
+			if y-1 >= 0 {
+				checkerBoard.Checkerboard[x+1][y-1][flag] = 1
+			}
+			if y+1 <= 7 {
+				checkerBoard.Checkerboard[x+1][y+1][flag] = 1
+			}
+		}
+	} else {
+		if x-1 >= 0 {
+			if y-1 >= 0 {
+				checkerBoard.Checkerboard[x-1][y-1][flag] = 1
+			}
+			if y+1 <= 7 {
+				checkerBoard.Checkerboard[x-1][y+1][flag] = 1
+			}
 		}
 	}
 }
