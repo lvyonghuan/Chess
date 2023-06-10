@@ -61,6 +61,7 @@ func ConnectRoom(token string, roomID int, c *gin.Context) error {
 	}
 	go control(&userClient)
 	userClient.Register <- &client
+	go Read(&client)
 	return nil
 }
 
@@ -102,6 +103,7 @@ func Read(c *model.Client) {
 				if !c.UserClient.IsReady {
 					c.UserClient.IsReady = true
 					c.UserClient.Room.ReadyNum += 1
+					//log.Println(c.UserClient.IsReady, c.UserClient.Room.ReadyNum)
 				} else {
 					c.UserClient.IsReady = false
 					c.UserClient.Room.ReadyNum -= 1
