@@ -50,11 +50,26 @@ func checkKingMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, 
 	} else {
 		flag = 3
 	}
-	//TODO:威胁检查器
 	if checkerBoard.Checkerboard[x2][y2][flag] == 1 {
 		return false, "王有威胁"
 	}
-	//TODO：王车易位判断
+
+	//王车易位
+	if checkerBoard.Checkerboard[x2][y2][0] == model.Rook && checkerBoard.Checkerboard[x2][y2][1] == color && checkerBoard.Checkerboard[x1][y1][4] == 0 && checkerBoard.Checkerboard[x2][y2][4] == 0 {
+		direction := 1 //易位方向判断
+		if y2 < y1 {
+			direction = -1
+		}
+		y := y1 + direction
+		for ; y != y1; y += direction {
+			if checkerBoard.Checkerboard[x1][y][0] != 0 || checkerBoard.Checkerboard[x1][y][flag] != 0 {
+				return false, "易个锤子"
+			}
+		}
+		return true, ""
+	} else if checkerBoard.Checkerboard[x2][y2][0] == model.Rook {
+		return false, "易个锤子"
+	}
 
 	if checkerBoard.Checkerboard[x2][y2][1] == color {
 		return false, "怎么还吃自己子的？"

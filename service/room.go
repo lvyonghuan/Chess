@@ -41,7 +41,6 @@ func generateRoomID() (id int) {
 }
 
 // 特别抽象的初始化棋盘
-// TODO:初始化威胁——针对王而言。
 func initCheckerBoard(checkerBoard *model.Chess) {
 	for i := 0; i < 8; i++ {
 		//初始化走卒
