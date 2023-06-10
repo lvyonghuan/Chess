@@ -10,5 +10,9 @@ func InitRouter() {
 		user.GET("/login", Login)
 		user.GET("/login/refresh", RefreshToken)
 	}
+	room := r.Group("/room")
+	{
+		room.POST("/create", CreateRoom)
+	}
 	r.Run()
 }

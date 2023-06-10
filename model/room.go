@@ -13,7 +13,7 @@ type Client struct {
 }
 
 type UserClient struct {
-	Client     sync.Map
+	Client     *sync.Map
 	Broadcast  chan []byte
 	Register   chan *Client
 	Unregister chan *Client
@@ -27,9 +27,3 @@ type Room struct {
 	Checkerboard Chess  `json:"checkerboard"`
 	UserClient   []UserClient
 }
-
-//// Piece 落子类型
-//type Piece struct {
-//	pieceType string
-//	color     string
-//}

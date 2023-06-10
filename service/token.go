@@ -5,6 +5,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"log"
 	"regexp"
+	"strconv"
 	"time"
 )
 
@@ -36,7 +37,7 @@ func parseJWT(tokenString, secret string) (*jwt.MapClaims, error) {
 func createTokenAndRefreshToken(id string) (token, refreshToken string, err error) {
 	tokenClaims := jwt.MapClaims{
 		"id":  id,
-		"exp": time.Now().Add(time.Hour).Unix(),
+		"exp": time.Now().Add(time.Hour).String(),
 	}
 	token, err = generateJWT(tokenSecret, tokenClaims)
 	if err != nil {
@@ -44,7 +45,7 @@ func createTokenAndRefreshToken(id string) (token, refreshToken string, err erro
 	}
 	refreshTokenClaims := jwt.MapClaims{
 		"id":  id,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"exp": time.Now().Add(time.Hour * 24).String(),
 	}
 	refreshToken, err = generateJWT(refreshTokenSecret, refreshTokenClaims)
 	if err != nil {
@@ -54,25 +55,30 @@ func createTokenAndRefreshToken(id string) (token, refreshToken string, err erro
 }
 
 // CheckExp 检测token是否过期
-func CheckExp(token string) (err error) {
-	mapClaims, err := parseJWT(token, refreshTokenSecret)
+func CheckExp(token, secret string) (err error, id int) {
+	mapClaims, err := parseJWT(token, secret)
 	if err != nil {
 		log.Println("jwt解密错误,1")
-		return errors.New("Error parsing JWT:" + err.Error())
+		return errors.New("Error parsing JWT:" + err.Error()), 0
 	}
 	expStr := (*mapClaims)["exp"].(string)
 	re := regexp.MustCompile(`(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+) ([+-]\d{4}) ([A-Z]+) m=(.*)`)
 	match := re.FindStringSubmatch(expStr)
 	if match == nil {
 		log.Println("解析错误")
-		return errors.New("解析时间戳错误")
+		return errors.New("解析时间戳错误"), 0
 	}
 	exp, err := time.Parse("2006-01-02 15:04:05.9999999 -0700 MST", match[1]+" "+match[2]+" "+match[3])
 	if err != nil {
-		return err
+		return err, 0
 	}
 	if time.Now().After(exp) {
-		return errors.New("token过期")
+		return errors.New("token过期"), 0
 	}
-	return nil
+	idStr := (*mapClaims)["id"].(string)
+	id, err = strconv.Atoi(idStr)
+	if err != nil {
+		return err, 0
+	}
+	return nil, id
 }

@@ -1,44 +1,44 @@
 package service
 
 import (
+	"Chess/database"
 	"Chess/model"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 	"log"
 	"math/rand"
-	"net/http"
 	"time"
 )
 
-var Upgrade = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
-
 var RoomMap map[int]*model.Room
+
+func InitRoom(token, roomName string, c *gin.Context) (roomNumber int, err error) {
+	err, userID := CheckExp(token, tokenSecret)
+	if err != nil {
+		return 0, err
+	}
+	var room model.Room
+	room.RoomName = roomName
+	CrateRoom(&room)
+	user, err := database.FindUserByUid(userID)
+	if err != nil {
+		log.Println("数据库查询失败,", err)
+		return 0, err
+	}
+	room.PlayerA = user.Name
+	//err = ConnectRoom(&room, c)
+	//if err != nil {
+	//	return 0, err
+	//}
+	return room.ID, nil
+}
 
 func CrateRoom(room *model.Room) {
 	room.ID = generateRoomID()
 	initCheckerBoard(&room.Checkerboard)
+	if RoomMap == nil { // 如果RoomMap是nil，则先进行初始化
+		RoomMap = make(map[int]*model.Room)
+	}
 	RoomMap[room.ID] = room //将房间加入map
-}
-
-func ConnectRoom(room *model.Room, c *gin.Context) error {
-	conn, err := Upgrade.Upgrade(c.Writer, c.Request, nil)
-	if err != nil {
-		log.Println("websocket升级失败:", err)
-		c.JSON(http.StatusInternalServerError, "websocket协议升级失败")
-		return err
-	}
-	client := model.Client{
-		Conn: conn,
-		Send: make(chan []byte, 1024),
-	}
-	room.UserClient[0].Client.Store(client, true)
-	return nil
 }
 
 // 随机生成房间号 虽然撞的概率很小很小，但是我懒得管了，写完再说
@@ -70,17 +70,9 @@ func initCheckerBoard(checkerBoard *model.Chess) {
 				} else if j == 2 || j == 5 {
 					checkerBoard.Checkerboard[i][j][0] = model.Knight
 				} else if j == 4 {
-					if i == 0 {
-						checkerBoard.Checkerboard[i][j][0] = model.Queen
-					} else {
-						checkerBoard.Checkerboard[i][j][0] = model.King
-					}
+					checkerBoard.Checkerboard[i][j][0] = model.Queen
 				} else if j == 5 {
-					if i == 7 {
-						checkerBoard.Checkerboard[i][j][0] = model.Queen
-					} else {
-						checkerBoard.Checkerboard[i][j][0] = model.King
-					}
+					checkerBoard.Checkerboard[i][j][0] = model.King
 				}
 				if i == 0 {
 					checkerBoard.Checkerboard[i][j][1] = model.White

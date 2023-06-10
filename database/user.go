@@ -24,3 +24,8 @@ func Login(username string) (user model.User, err error) {
 	err = DB.Where("name=?", username).First(&user).Error
 	return user, err
 }
+
+func FindUserByUid(uid int) (user model.User, err error) {
+	err = DB.Where("id=?", uid).First(&user).Error
+	return user, err
+}
