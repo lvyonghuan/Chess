@@ -28,3 +28,9 @@ type Chess struct {
 	Mute         sync.Mutex   //防止并发问题
 	King         [2][2]int    //国王A/B位置
 }
+
+// Upgrade 升变记录
+type Upgrade struct {
+	IsUpgrade         bool
+	UpgradeCoordinate [2]int
+}

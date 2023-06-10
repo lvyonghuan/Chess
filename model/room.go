@@ -23,5 +23,6 @@ type Room struct {
 	NextStep      int        `json:"nextStep"` //1表示下一步A下，2表示下一步B下
 	Checkerboard  *Chess     `json:"checkerboard"`
 	ReadyNum      int        `json:"readNum"`
+	Upgrade       Upgrade
 	ViewersClient []UserClient
 }

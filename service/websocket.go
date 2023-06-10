@@ -103,7 +103,6 @@ func Read(c *model.Client) {
 				if !c.UserClient.IsReady {
 					c.UserClient.IsReady = true
 					c.UserClient.Room.ReadyNum += 1
-					//log.Println(c.UserClient.IsReady, c.UserClient.Room.ReadyNum)
 				} else {
 					c.UserClient.IsReady = false
 					c.UserClient.Room.ReadyNum -= 1
@@ -122,14 +121,29 @@ func Read(c *model.Client) {
 					log.Println(errStr)
 				}
 				move(msg, c)
+				if c.UserClient.Room.Upgrade.IsUpgrade {
+					c.UserClient.Room.NextStep = c.UserClient.Color
+				} else {
+					if c.UserClient.Color == model.White {
+						c.UserClient.Room.NextStep = model.Black
+					} else {
+						c.UserClient.Room.NextStep = model.White
+					}
+				}
+				//TODO：判胜
+			case 3:
+				//TODO：认输
+			case 4:
+				if c.UserClient.Room.NextStep != c.UserClient.Color || !c.UserClient.Room.Upgrade.IsUpgrade {
+					log.Println("升个锤子")
+					continue
+				}
+				upgrade(msg, c)
+				//TODO：判胜
 			}
 		default:
 			log.Println("不支持的消息类型")
 			continue
 		}
 	}
-}
-
-func Write(c *model.Client) {
-
 }
