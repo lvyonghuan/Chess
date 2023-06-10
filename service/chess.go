@@ -1,0 +1,66 @@
+package service
+
+import (
+	"Chess/model"
+	"log"
+)
+
+// 检查着点的合法性
+func checkMove(c *model.Client, msg model.WebsocketMessage) (bool, string) {
+	checkerBoard := c.UserClient.Room.Checkerboard
+	x1 := msg.MoveBefore[0]
+	y1 := msg.MoveBefore[1]
+	x2 := msg.MoveAfter[0]
+	y2 := msg.MoveAfter[1]
+	piece := checkerBoard.Checkerboard[x1][y1][0]
+	color := checkerBoard.Checkerboard[x1][y1][1]
+	if color != c.UserClient.Color {
+		return false, "棋色都错了"
+	}
+	//边界检查
+	if x2 > 7 || y2 > 7 || x2 < 0 || y2 < 0 {
+		return false, "边界都超了"
+	}
+	switch piece {
+	case model.King:
+		return checkKingMove(x1, y1, x2, y2, color, checkerBoard)
+	case model.Queen:
+
+	case model.Rook:
+
+	case model.Bishop:
+
+	case model.Knight:
+
+	case model.Pawn:
+
+	default:
+		log.Println("什么鬼")
+		return false, "什么鬼"
+	}
+}
+
+// 合法性检查大全
+// 国王检查
+func checkKingMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, string) {
+	var flag int
+	if color == model.White {
+		flag = 2
+	} else {
+		flag = 3
+	}
+	//TODO:威胁检查器
+	if checkerBoard.Checkerboard[x2][y2][flag] == 1 {
+		return false, "王有威胁"
+	}
+	//TODO：王车易位判断
+
+	if checkerBoard.Checkerboard[x2][y2][1] == color {
+		return false, "怎么还吃自己子的？"
+	}
+
+}
+
+func checkQueenMove(x1, y1, x2, y2 int) bool {
+
+}

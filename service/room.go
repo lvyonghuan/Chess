@@ -17,6 +17,8 @@ func InitRoom(token, roomName string, c *gin.Context) (roomNumber int, err error
 	var room model.Room
 	room.RoomName = roomName
 	crateRoom(&room)
+	//白棋先走
+	room.NextStep = model.White
 	return room.ID, nil
 }
 
@@ -37,6 +39,7 @@ func generateRoomID() (id int) {
 }
 
 // 特别抽象的初始化棋盘
+// TODO:初始化威胁——针对王而言。
 func initCheckerBoard(checkerBoard *model.Chess) {
 	for i := 0; i < 8; i++ {
 		//初始化走卒
@@ -54,9 +57,9 @@ func initCheckerBoard(checkerBoard *model.Chess) {
 				if j == 0 || j == 7 {
 					checkerBoard.Checkerboard[i][j][0] = model.Rook
 				} else if j == 1 || j == 6 {
-					checkerBoard.Checkerboard[i][j][0] = model.Bishop
-				} else if j == 2 || j == 5 {
 					checkerBoard.Checkerboard[i][j][0] = model.Knight
+				} else if j == 2 || j == 5 {
+					checkerBoard.Checkerboard[i][j][0] = model.Bishop
 				} else if j == 4 {
 					checkerBoard.Checkerboard[i][j][0] = model.Queen
 				} else if j == 5 {

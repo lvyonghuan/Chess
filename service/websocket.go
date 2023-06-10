@@ -42,7 +42,6 @@ func ConnectRoom(token string, roomID int, c *gin.Context) error {
 	}
 	var userClient model.UserClient
 	client.UserClient = &userClient
-	//userClient.Client.Store(client, true)
 	userClient.Register = make(chan *model.Client)
 	userClient.Unregister = make(chan *model.Client)
 	userClient.User = user
@@ -50,8 +49,10 @@ func ConnectRoom(token string, roomID int, c *gin.Context) error {
 	userClient.IsReady = false
 	//用户填入房间
 	if room.PlayerA != (model.UserClient{}) {
+		userClient.Color = model.White
 		room.PlayerA = userClient
 	} else if room.PlayerB != (model.UserClient{}) {
+		userClient.Color = model.Black
 		room.PlayerB = userClient
 	} else {
 		return errors.New("房间对战用户已满")
@@ -94,7 +95,7 @@ func Read(c *model.Client) {
 				continue
 			}
 			//消息类型。1表示准备（重复发送退出准备状态），2表示移动，3表示认输（和棋）
-			switch msgType {
+			switch msg.Type {
 			case 1:
 				if !c.UserClient.IsReady {
 					c.UserClient.IsReady = true
@@ -103,9 +104,12 @@ func Read(c *model.Client) {
 					c.UserClient.IsReady = false
 					c.UserClient.Room.ReadyNum -= 1
 				}
-				if c.UserClient.Room.ReadyNum == 2 {
-					//TODO：开局
+			case 2:
+				if c.UserClient.Room.ReadyNum != 2 {
+					log.Println("局都还没开")
+					continue
 				}
+				//TODO：检查合法性
 			}
 		default:
 			log.Println("不支持的消息类型")
