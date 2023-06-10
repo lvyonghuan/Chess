@@ -6,13 +6,12 @@ import (
 	"gorm.io/gorm"
 )
 
-func FindUserByUsername(username string) (err error) {
-	var user model.User
+func FindUserByUsername(username string) (err error, user model.User) {
 	err = DB.Where("name=?", username).First(&user).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil
+		return nil, model.User{}
 	}
-	return nil
+	return nil, user
 }
 
 func Register(user model.User) (err error) {

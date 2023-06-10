@@ -1,10 +1,8 @@
 package service
 
 import (
-	"Chess/database"
 	"Chess/model"
 	"github.com/gin-gonic/gin"
-	"log"
 	"math/rand"
 	"time"
 )
@@ -12,29 +10,19 @@ import (
 var RoomMap map[int]*model.Room
 
 func InitRoom(token, roomName string, c *gin.Context) (roomNumber int, err error) {
-	err, userID := CheckExp(token, tokenSecret)
+	err, _ = CheckExp(token, tokenSecret)
 	if err != nil {
 		return 0, err
 	}
 	var room model.Room
 	room.RoomName = roomName
-	CrateRoom(&room)
-	user, err := database.FindUserByUid(userID)
-	if err != nil {
-		log.Println("数据库查询失败,", err)
-		return 0, err
-	}
-	room.PlayerA = user.Name
-	//err = ConnectRoom(&room, c)
-	//if err != nil {
-	//	return 0, err
-	//}
+	crateRoom(&room)
 	return room.ID, nil
 }
 
-func CrateRoom(room *model.Room) {
+func crateRoom(room *model.Room) {
 	room.ID = generateRoomID()
-	initCheckerBoard(&room.Checkerboard)
+	initCheckerBoard(room.Checkerboard)
 	if RoomMap == nil { // 如果RoomMap是nil，则先进行初始化
 		RoomMap = make(map[int]*model.Room)
 	}

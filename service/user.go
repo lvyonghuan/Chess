@@ -11,11 +11,12 @@ import (
 )
 
 func Register(username, password string) (err error) {
-	err = database.FindUserByUsername(username)
+	err, user := database.FindUserByUsername(username)
 	if err != nil {
 		return err
+	} else if user != (model.User{}) {
+		return errors.New("用户名已注册")
 	}
-	var user model.User
 	user.Name = username
 	//TODO:加密
 	user.Password = password

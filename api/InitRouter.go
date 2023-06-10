@@ -13,6 +13,7 @@ func InitRouter() {
 	room := r.Group("/room")
 	{
 		room.POST("/create", CreateRoom)
+		room.GET("/connect", ConnectRoom)
 	}
 	r.Run()
 }
