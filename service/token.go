@@ -37,7 +37,7 @@ func parseJWT(tokenString, secret string) (*jwt.MapClaims, error) {
 func createTokenAndRefreshToken(id string) (token, refreshToken string, err error) {
 	tokenClaims := jwt.MapClaims{
 		"id":  id,
-		"exp": time.Now().Add(time.Hour).String(),
+		"exp": time.Now().Add(time.Hour * 12).String(),
 	}
 	token, err = generateJWT(tokenSecret, tokenClaims)
 	if err != nil {

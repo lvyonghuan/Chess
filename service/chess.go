@@ -38,6 +38,7 @@ func checkMove(c *model.Client, msg model.WebsocketMessage) (bool, string) {
 		log.Println("什么鬼")
 		return false, "什么鬼"
 	}
+	return true, ""
 }
 
 // 合法性检查大全
@@ -58,9 +59,35 @@ func checkKingMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, 
 	if checkerBoard.Checkerboard[x2][y2][1] == color {
 		return false, "怎么还吃自己子的？"
 	}
-
+	return true, ""
 }
 
-func checkQueenMove(x1, y1, x2, y2 int) bool {
+func checkQueenMove(x1, y1, x2, y2 int) (bool, string) {
+	return true, ""
+}
 
+// 对马撇脚的计算
+func isBlocked(x, y int, offset []int, checkerBoard *model.Chess) bool {
+	blockerX, blockerY := 0, 0
+
+	if offset[0] > 1 {
+		blockerX = x + 1
+	} else if offset[0] < -1 {
+		blockerX = x - 1
+	} else {
+		blockerX = x
+	}
+
+	if offset[1] > 1 {
+		blockerY = y + 1
+	} else if offset[1] < -1 {
+		blockerY = y - 1
+	} else {
+		blockerY = y
+	}
+
+	if blockerX >= 0 && blockerX <= 7 && blockerY >= 0 && blockerY <= 7 {
+		return checkerBoard.Checkerboard[blockerX][blockerY][0] != 0
+	}
+	return false
 }

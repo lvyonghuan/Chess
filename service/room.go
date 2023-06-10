@@ -3,6 +3,7 @@ package service
 import (
 	"Chess/model"
 	"github.com/gin-gonic/gin"
+	"log"
 	"math/rand"
 	"time"
 )
@@ -24,6 +25,7 @@ func InitRoom(token, roomName string, c *gin.Context) (roomNumber int, err error
 
 func crateRoom(room *model.Room) {
 	room.ID = generateRoomID()
+	room.Checkerboard = &model.Chess{}
 	initCheckerBoard(room.Checkerboard)
 	if RoomMap == nil { // 如果RoomMap是nil，则先进行初始化
 		RoomMap = make(map[int]*model.Room)
@@ -60,9 +62,9 @@ func initCheckerBoard(checkerBoard *model.Chess) {
 					checkerBoard.Checkerboard[i][j][0] = model.Knight
 				} else if j == 2 || j == 5 {
 					checkerBoard.Checkerboard[i][j][0] = model.Bishop
-				} else if j == 4 {
+				} else if j == 3 {
 					checkerBoard.Checkerboard[i][j][0] = model.Queen
-				} else if j == 5 {
+				} else if j == 4 {
 					checkerBoard.Checkerboard[i][j][0] = model.King
 				}
 				if i == 0 {
@@ -78,4 +80,8 @@ func initCheckerBoard(checkerBoard *model.Chess) {
 			}
 		}
 	}
+	//初始化棋盘威胁度
+	CalculateThreaten(model.White, checkerBoard)
+	CalculateThreaten(model.Black, checkerBoard)
+	log.Println(checkerBoard)
 }

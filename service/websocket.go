@@ -68,9 +68,9 @@ func control(user *model.UserClient) {
 		select {
 		case client := <-user.Register:
 			user.Client.Store(client, true)
-		case client := <-user.Unregister:
+			//case client := <-user.Unregister:
 			//TODO:注销
-		case message := <-user.Broadcast:
+			//case message := <-user.Broadcast:
 			//TODO:传播消息
 		}
 	}
