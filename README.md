@@ -117,6 +117,7 @@ ws://your address/room/connect
 |:----------------|:-------|:---------|:--------------|
 | `Authorization` | Header | `string` | **必选**, token |
 | `room_id`       | query  | `int`    | 房间ID          |
+
 利用房间ID加入已经创建的房间。
 #### 准备/取消准备
 发送以下json结构体
@@ -169,3 +170,5 @@ upgrade字段代表了兵晋升的形态。参考上文的棋子编号。
 
 ## 目前效果
 ![img.png](img.png)
+
+云服务器项目部署地址：http://140.143.151.99:8080
