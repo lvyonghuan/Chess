@@ -128,15 +128,20 @@ func Read(c *model.Client) {
 				if !c.UserClient.IsReady {
 					c.UserClient.IsReady = true
 					c.UserClient.Room.ReadyNum += 1
+					marshal, err := json.Marshal(c.UserClient.User.Name + "准备好了")
+					if err != nil {
+						log.Println("that's messed up,", err)
+					}
+					c.UserClient.Broadcast <- marshal
 				} else {
 					c.UserClient.IsReady = false
 					c.UserClient.Room.ReadyNum -= 1
+					marshal, err := json.Marshal(c.UserClient.User.Name + "退出了准备状态")
+					if err != nil {
+						log.Println("that's messed up,", err)
+					}
+					c.UserClient.Broadcast <- marshal
 				}
-				marshal, err := json.Marshal(c.UserClient.User.Name + "准备好了")
-				if err != nil {
-					log.Println("that's messed up,", err)
-				}
-				c.UserClient.Broadcast <- marshal
 			case 2:
 				if c.UserClient.Room.ReadyNum != 2 {
 					log.Println("局都还没开")
@@ -161,13 +166,18 @@ func Read(c *model.Client) {
 						c.UserClient.Room.NextStep = model.White
 					}
 				}
+				log.Println(c.UserClient.Room.Checkerboard.Checkerboard) //打印不可名状的地图到cmd
 				marshal, err := json.Marshal(c.UserClient.Room.Checkerboard.Checkerboard)
 				if err != nil {
 					log.Println("that's messed up,", err)
 				}
 				c.UserClient.Broadcast <- marshal
 				if CheckWin(c) {
-					//TODO：赢了
+					marshal, err := json.Marshal(c.UserClient.User.Name + "赢得了本局")
+					if err != nil {
+						log.Println("that's messed up,", err)
+					}
+					c.UserClient.Broadcast <- marshal
 				}
 			case 3:
 				//TODO：认输
@@ -177,13 +187,18 @@ func Read(c *model.Client) {
 					continue
 				}
 				upgrade(msg, c)
+				log.Println(c.UserClient.Room.Checkerboard.Checkerboard) //打印不可名状的地图到cmd
 				marshal, err := json.Marshal(c.UserClient.Room.Checkerboard.Checkerboard)
 				if err != nil {
 					log.Println("that's messed up,", err)
 				}
 				c.UserClient.Broadcast <- marshal
 				if CheckWin(c) {
-					//TODO：赢了
+					marshal, err := json.Marshal(c.UserClient.User.Name + "赢得了本局")
+					if err != nil {
+						log.Println("that's messed up,", err)
+					}
+					c.UserClient.Broadcast <- marshal
 				}
 			}
 		default:

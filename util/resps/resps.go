@@ -32,3 +32,18 @@ func RespRoomNum(c *gin.Context, roomID int) {
 		"info":   roomID,
 	})
 }
+
+func RespToken(c *gin.Context, token, refreshToken string) {
+	c.JSON(http.StatusOK, gin.H{
+		"status":        200,
+		"token":         token,
+		"refresh_token": refreshToken,
+	})
+}
+
+func NormResp(c *gin.Context, any interface{}) {
+	c.JSON(http.StatusOK, gin.H{
+		"status": 200,
+		"info":   any,
+	})
+}

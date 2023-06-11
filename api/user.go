@@ -33,7 +33,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	log.Println(token, refreshToken)
-	resps.RespOK(c)
+	resps.RespToken(c, token, refreshToken)
 }
 
 func RefreshToken(c *gin.Context) {
@@ -45,5 +45,5 @@ func RefreshToken(c *gin.Context) {
 		return
 	}
 	log.Println(token, refreshToken)
-	resps.RespOK(c)
+	resps.RespToken(c, token, refreshToken)
 }
