@@ -5,7 +5,7 @@
 
 #### 注册
 
-```http
+```
   POST /user/register
 ```
 
@@ -30,7 +30,7 @@
 
 #### 登录
 
-```http
+```
   GET /user/login
 ```
 
@@ -57,7 +57,7 @@
 
 #### 刷新token
 
-```http
+```
   GET /user/login/refresh
 ```
 
@@ -84,7 +84,7 @@
 
 #### 创建房间
 
-```http
+```
   POST /room/create
 ```
 
@@ -110,7 +110,7 @@
 ```
 ### 游戏相关操作
 #### 加入房间
-```http
+```
 ws://your address/room/connect
 ```
 | 参数              | 字段     | 类型       | 描述            |
