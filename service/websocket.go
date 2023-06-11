@@ -172,7 +172,7 @@ func Read(c *model.Client) {
 					log.Println("that's messed up,", err)
 				}
 				c.UserClient.Broadcast <- marshal
-				if CheckWin(c) {
+				if !CheckWin(c) {
 					marshal, err := json.Marshal(c.UserClient.User.Name + "赢得了本局")
 					if err != nil {
 						log.Println("that's messed up,", err)
@@ -193,7 +193,7 @@ func Read(c *model.Client) {
 					log.Println("that's messed up,", err)
 				}
 				c.UserClient.Broadcast <- marshal
-				if CheckWin(c) {
+				if !CheckWin(c) {
 					marshal, err := json.Marshal(c.UserClient.User.Name + "赢得了本局")
 					if err != nil {
 						log.Println("that's messed up,", err)

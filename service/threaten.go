@@ -22,8 +22,8 @@ func CalculateThreaten(color int, checkerBoard *model.Chess) {
 	} else {
 		flag = 3
 	}
-	for i := 0; i < 7; i++ {
-		for j := 0; j < 7; j++ {
+	for i := 0; i <= 7; i++ {
+		for j := 0; j <= 7; j++ {
 			if checkerBoard.Checkerboard[i][j][1] == color {
 				switch checkerBoard.Checkerboard[i][j][0] {
 				case model.King:

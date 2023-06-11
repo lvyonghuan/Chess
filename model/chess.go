@@ -14,11 +14,6 @@ const (
 	Black = 2
 )
 
-const (
-	NoThreaten   = 0
-	HaveThreaten = 1
-)
-
 const Void = 0 //没棋子的格子
 
 type Chess struct {

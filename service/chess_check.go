@@ -288,9 +288,9 @@ func CheckWin(c *model.Client) bool {
 	//反着来的。A move则判断B
 	var flag1, flag2 int
 	if color == model.White {
-		flag1, flag2 = 3, 1
+		flag1, flag2 = 2, 1
 	} else {
-		flag1, flag2 = 2, 0
+		flag1, flag2 = 3, 0
 	}
 	kingX, kingY := c.UserClient.Room.Checkerboard.King[flag2][0], c.UserClient.Room.Checkerboard.King[flag2][1]
 	//只要王现在没被将死，就还能动
@@ -301,7 +301,7 @@ func CheckWin(c *model.Client) bool {
 		{-1, 0}, {1, 0}, {0, -1}, {0, 1},
 		{-1, -1}, {-1, 1}, {1, -1}, {1, 1},
 	}
-	var count = 0 //定义计数变量，==8时（即周围一圈要么被堵上了要么被将死了）+王自己本身被将死了判输
+	var count = 0 //定义计数变量，==8时+王自己本身被将死了判输
 	//TODO:下一步救场
 	for _, d := range directions {
 		newX, newY := kingX+d[0], kingY+d[1]
@@ -309,5 +309,5 @@ func CheckWin(c *model.Client) bool {
 			count++
 		}
 	}
-	return count == 8
+	return !(count == 8)
 }

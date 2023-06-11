@@ -3,6 +3,7 @@ package service
 import (
 	"Chess/model"
 	"github.com/gin-gonic/gin"
+	"log"
 	"math/rand"
 	"time"
 )
@@ -86,4 +87,5 @@ func initCheckerBoard(checkerBoard *model.Chess) {
 	//初始化棋盘威胁度
 	CalculateThreaten(model.White, checkerBoard)
 	CalculateThreaten(model.Black, checkerBoard)
+	log.Println(checkerBoard.Checkerboard)
 }
