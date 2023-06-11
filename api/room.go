@@ -17,7 +17,7 @@ func CreateRoom(c *gin.Context) {
 		resps.NormErr(c, 400, err.Error())
 	}
 	log.Println(num)
-	resps.RespOK(c)
+	resps.RespRoomNum(c, num)
 }
 
 // ConnectRoom 建立websocket链接

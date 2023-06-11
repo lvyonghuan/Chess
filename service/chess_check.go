@@ -281,3 +281,33 @@ func checkPawnMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, 
 	return false, "兵的移动方式不符合规则"
 
 }
+
+// CheckWin 判断胜负。特别朴素，做不到让对面再多走一步。不是说不能做到，我先摆一会。
+func CheckWin(c *model.Client) bool {
+	var color = c.UserClient.Color
+	//反着来的。A move则判断B
+	var flag1, flag2 int
+	if color == model.White {
+		flag1, flag2 = 3, 1
+	} else {
+		flag1, flag2 = 2, 0
+	}
+	kingX, kingY := c.UserClient.Room.Checkerboard.King[flag2][0], c.UserClient.Room.Checkerboard.King[flag2][1]
+	//只要王现在没被将死，就还能动
+	if c.UserClient.Room.Checkerboard.Checkerboard[kingX][kingY][flag1] == 0 {
+		return true
+	}
+	directions := [][]int{
+		{-1, 0}, {1, 0}, {0, -1}, {0, 1},
+		{-1, -1}, {-1, 1}, {1, -1}, {1, 1},
+	}
+	var count = 0 //定义计数变量，==8时（即周围一圈要么被堵上了要么被将死了）+王自己本身被将死了判输
+	//TODO:下一步救场
+	for _, d := range directions {
+		newX, newY := kingX+d[0], kingY+d[1]
+		if c.UserClient.Room.Checkerboard.Checkerboard[newX][newY][flag1] == 1 {
+			count++
+		}
+	}
+	return count == 8
+}

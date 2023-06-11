@@ -25,3 +25,10 @@ func NormErr(c *gin.Context, status int, info string) {
 		"info":   info,
 	})
 }
+
+func RespRoomNum(c *gin.Context, roomID int) {
+	c.JSON(http.StatusOK, gin.H{
+		"status": 200,
+		"info":   roomID,
+	})
+}

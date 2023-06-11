@@ -118,11 +118,11 @@ func calculateBishop(x, y, flag int, checkerBoard *model.Chess) {
 }
 
 func calculateKnight(x, y, flag int, checkerBoard *model.Chess) {
-	offsets := [][]int{
+	directions := [][]int{
 		{2, 1}, {1, 2}, {-1, 2}, {-2, 1},
 		{-2, -1}, {-1, -2}, {1, -2}, {2, -1},
 	}
-	for _, o := range offsets {
+	for _, o := range directions {
 		newX, newY := x+o[0], y+o[1]
 		if newX >= 0 && newX <= 7 && newY >= 0 && newY <= 7 {
 			checkerBoard.Checkerboard[newX][newY][flag] = 1

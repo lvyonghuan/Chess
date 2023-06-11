@@ -46,6 +46,7 @@ func ConnectRoom(token string, roomID int, c *gin.Context) error {
 	client.UserClient.Client = &sync.Map{}
 	userClient.Register = make(chan *model.Client)
 	userClient.Unregister = make(chan *model.Client)
+	userClient.Broadcast = make(chan []byte)
 	userClient.User = user
 	userClient.Room = room
 	userClient.IsReady = false
@@ -59,9 +60,14 @@ func ConnectRoom(token string, roomID int, c *gin.Context) error {
 	} else {
 		return errors.New("房间对战用户已满")
 	}
+	if room.ViewersClient == nil {
+		room.ViewersClient = make([]model.UserClient, 0)
+	}
+	room.ViewersClient = append(room.ViewersClient, userClient)
 	go control(&userClient)
 	userClient.Register <- &client
 	go Read(&client)
+	go Write(&client)
 	return nil
 }
 
@@ -71,10 +77,28 @@ func control(user *model.UserClient) {
 		select {
 		case client := <-user.Register:
 			user.Client.Store(client, true)
-			//case client := <-user.Unregister:
-			//TODO:注销
-			//case message := <-user.Broadcast:
-			//TODO:传播消息
+		case client := <-user.Unregister:
+			client.UserClient.Room.ReadyNum -= 1
+			if *client.UserClient == client.UserClient.Room.PlayerA {
+				client.UserClient.Room.PlayerA = model.UserClient{}
+			} else {
+				client.UserClient.Room.PlayerB = model.UserClient{}
+			}
+			err := client.Conn.Close()
+			if err != nil {
+				log.Println(err)
+			}
+		case message := <-user.Broadcast:
+			for _, client := range user.Room.ViewersClient {
+				client.Client.Range(func(key, value interface{}) bool {
+					client, ok := key.(*model.Client)
+					if !ok {
+						log.Println("Failed to convert key to Client:", key)
+					}
+					client.Send <- message
+					return true
+				})
+			}
 		}
 	}
 }
@@ -82,6 +106,7 @@ func control(user *model.UserClient) {
 func Read(c *model.Client) {
 	defer func() {
 		log.Println("好似")
+		c.UserClient.Unregister <- c
 	}()
 	for {
 		msgType, msgByte, err := c.Conn.ReadMessage()
@@ -107,6 +132,11 @@ func Read(c *model.Client) {
 					c.UserClient.IsReady = false
 					c.UserClient.Room.ReadyNum -= 1
 				}
+				marshal, err := json.Marshal(c.UserClient.User.Name + "准备好了")
+				if err != nil {
+					log.Println("that's messed up,", err)
+				}
+				c.UserClient.Broadcast <- marshal
 			case 2:
 				if c.UserClient.Room.ReadyNum != 2 {
 					log.Println("局都还没开")
@@ -119,6 +149,7 @@ func Read(c *model.Client) {
 				isLegitimate, errStr := checkMove(c, msg)
 				if !isLegitimate {
 					log.Println(errStr)
+					continue //避免顺路执行下去了
 				}
 				move(msg, c)
 				if c.UserClient.Room.Upgrade.IsUpgrade {
@@ -130,7 +161,14 @@ func Read(c *model.Client) {
 						c.UserClient.Room.NextStep = model.White
 					}
 				}
-				//TODO：判胜
+				marshal, err := json.Marshal(c.UserClient.Room.Checkerboard.Checkerboard)
+				if err != nil {
+					log.Println("that's messed up,", err)
+				}
+				c.UserClient.Broadcast <- marshal
+				if CheckWin(c) {
+					//TODO：赢了
+				}
 			case 3:
 				//TODO：认输
 			case 4:
@@ -139,11 +177,34 @@ func Read(c *model.Client) {
 					continue
 				}
 				upgrade(msg, c)
-				//TODO：判胜
+				marshal, err := json.Marshal(c.UserClient.Room.Checkerboard.Checkerboard)
+				if err != nil {
+					log.Println("that's messed up,", err)
+				}
+				c.UserClient.Broadcast <- marshal
+				if CheckWin(c) {
+					//TODO：赢了
+				}
 			}
 		default:
 			log.Println("不支持的消息类型")
 			continue
+		}
+	}
+}
+
+func Write(c *model.Client) {
+	defer func() {
+		//我寻思read读到应该就行了
+	}()
+	for {
+		select {
+		case msg := <-c.Send:
+			err := c.Conn.WriteMessage(websocket.TextMessage, msg)
+			if err != nil {
+				log.Println("write message error,that's messed up,", err)
+				return
+			}
 		}
 	}
 }

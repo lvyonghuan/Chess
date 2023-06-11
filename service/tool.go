@@ -2,7 +2,6 @@ package service
 
 import (
 	"Chess/model"
-	"sync"
 )
 
 func abs(a int) int {
@@ -15,9 +14,8 @@ func abs(a int) int {
 func copyChessBoard(chessBoard *model.Chess) model.Chess {
 	newBoard := model.Chess{
 		Checkerboard: chessBoard.Checkerboard,
-		Mute:         sync.Mutex{},
+		King:         chessBoard.King,
 	}
-
 	return newBoard
 }
 

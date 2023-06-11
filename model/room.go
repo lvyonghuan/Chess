@@ -11,8 +11,8 @@ type UserClient struct {
 	Unregister chan *Client
 	User       User //用户信息，目前没用，留着将来（迫真）用
 	IsReady    bool
-	Color      int   //参照颜色const。playerA执白旗，B执黑旗。
-	Room       *Room //我感觉这一步多少有点......不好评价
+	Color      int //参照颜色const。playerA执白旗，B执黑旗。
+	Room       *Room
 }
 
 type Room struct {
