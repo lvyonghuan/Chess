@@ -118,7 +118,7 @@ ws://your address/room/connect
 | 参数              | 字段     | 类型       | 描述            |
 |:----------------|:-------|:---------|:--------------|
 | `Authorization` | Header | `string` | **必选**, token |
-| `room_id`       | query  | `int`    | 房间ID          |
+| `room_id`       | query  | `int`    | **必选**,房间ID          |
 
 利用房间ID加入已经创建的房间。
 #### 准备/取消准备
@@ -135,7 +135,7 @@ ws://your address/room/connect
 发送以下json结构体
 ```json
 {
-  "type": 1,
+  "type": 2,
   "move_before": [3, 4],
   "move_after": [5, 6]
 }
@@ -164,7 +164,7 @@ Black 黑棋 2
 发送以下json结构体：
 ```json
 {
-  "type": 1,
+  "type": 4,
   "upgrade": 1
 }
 ```
