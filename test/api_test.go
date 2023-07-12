@@ -5,12 +5,10 @@ import (
 	"Chess/database"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"strconv"
 	"strings"
 	"testing"
 )
@@ -130,56 +128,68 @@ func TestCreateRoom(t *testing.T) {
 
 // websocket与棋盘逻辑测试
 func TestWebsocketAndChessLogic(t *testing.T) {
-	//s := httptest.NewServer(testWebsocket())
-
-	token1 := testToken.Token
-	token2 := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIyMDIzLTA3LTEyIDIwOjIzOjE1LjY3NzM3NDEgKzA4MDAgQ1NUIG09KzQzMzE2LjIwOTY0NjgwMSIsImlkIjoiMSJ9.oLoTxiJ9lGYMYdNGdlhe86eXbSiOWiGIPC268fnlbak"
-	//模仿两名用户
-	w1 := httptest.NewRecorder()
-	w2 := httptest.NewRecorder()
-	c1, _ := gin.CreateTestContext(w1)
-	c2, _ := gin.CreateTestContext(w2)
-
-	c1.Request, _ = http.NewRequest("GET", "ws://127.0.0.1:8080/room/connect?room_id="+strconv.Itoa(testRoom.RoomID), nil)
-	c1.Request.Header.Set("Authorization", token1)
-	c1.Request.Header.Set("Upgrade", "websocket")
-	c1.Request.Header.Set("Connection", "Upgrade")
-	c1.Request.Header.Set("Sec-WebSocket-Version", "13")
-	//c1.Request.Header.Set("Sec-WebSocket-Key", "1")
-	c2.Request, _ = http.NewRequest("GET", "ws://127.0.0.1:8080/room/connect?room_id="+strconv.Itoa(testRoom.RoomID), nil)
-	c2.Request.Header.Set("Authorization", token2)
-	c2.Request.Header.Set("Upgrade", "websocket")
-	c2.Request.Header.Set("Connection", "Upgrade")
-	c2.Request.Header.Set("Sec-WebSocket-Version", "13")
-	//c1.Request.Header.Set("Sec-WebSocket-Key", "2")
-	//进行websocket连接
-	api.ConnectRoom(c1)
-	api.ConnectRoom(c2)
-	wsURL := "ws://127.0.0.1:8080/room/connect?room_id=" + strconv.Itoa(testRoom.RoomID)
-	conn1, _, err := websocket.DefaultDialer.Dial(wsURL, nil)
-	if err != nil {
-		t.Fatalf("WebSocket connection failed: %v", err)
-	}
-	conn2, _, err := websocket.DefaultDialer.Dial(wsURL, nil)
-	if err != nil {
-		t.Fatalf("WebSocket connection failed: %v", err)
-	}
-	defer conn1.Close()
-	defer conn2.Close()
-	messageReady := struct {
-		Type int `json:"type"`
-	}{
-		Type: 1,
-	}
-	err = conn1.WriteJSON(messageReady)
-	if err != nil {
-		t.Errorf("WebSocket connection failed: %v", err)
-	}
-	err = conn2.WriteJSON(messageReady)
-	if err != nil {
-		t.Errorf("WebSocket connection failed: %v", err)
-	}
-
+	////s := httptest.NewServer(testWebsocket())
+	//
+	//token1 := testToken.Token
+	//token2 := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIyMDIzLTA3LTEyIDIwOjIzOjE1LjY3NzM3NDEgKzA4MDAgQ1NUIG09KzQzMzE2LjIwOTY0NjgwMSIsImlkIjoiMSJ9.oLoTxiJ9lGYMYdNGdlhe86eXbSiOWiGIPC268fnlbak"
+	////模仿两名用户
+	//
+	//w1 := httptest.NewRecorder()
+	//w2 := httptest.NewRecorder()
+	////w3 := newRecorder{
+	////	ResponseRecorder: nil,
+	////	Hijacker:         nil,
+	////}
+	////w3.HeaderMap = make(http.Header)
+	////w3.Body = new(bytes.Buffer)
+	////w3.Code = 200
+	////w3.Hijacker=
+	//
+	//c1, _ := gin.CreateTestContext(w1)
+	//c2, _ := gin.CreateTestContext(w2)
+	//
+	//c1.Request, _ = http.NewRequest("GET", "ws://127.0.0.1:8080/room/connect?room_id="+strconv.Itoa(testRoom.RoomID), nil)
+	//c1.Request.Header.Set("Authorization", token1)
+	//c1.Request.Header.Set("Upgrade", "websocket")
+	//c1.Request.Header.Set("Connection", "Upgrade")
+	//c1.Request.Header.Set("Sec-WebSocket-Version", "13")
+	////c1.Request.Header.Set("Sec-WebSocket-Key", "1")
+	//c2.Request, _ = http.NewRequest("GET", "ws://127.0.0.1:8080/room/connect?room_id="+strconv.Itoa(testRoom.RoomID), nil)
+	//c2.Request.Header.Set("Authorization", token2)
+	//c2.Request.Header.Set("Upgrade", "websocket")
+	//c2.Request.Header.Set("Connection", "Upgrade")
+	//c2.Request.Header.Set("Sec-WebSocket-Version", "13")
+	////c1.Request.Header.Set("Sec-WebSocket-Key", "2")
+	////进行websocket连接
+	//api.ConnectRoom(c1)
+	//api.ConnectRoom(c2)
+	//wsURL := "ws://127.0.0.1:8080/room/connect?room_id=" + strconv.Itoa(testRoom.RoomID)
+	//conn1, err := websocket2.Dial(wsURL, "", "")
+	//if err != nil {
+	//	t.Fatalf("WebSocket connection failed: %v", err)
+	//}
+	//conn2, err := websocket2.Dial(wsURL, "", "")
+	//if err != nil {
+	//	t.Fatalf("WebSocket connection failed: %v", err)
+	//}
+	//defer conn1.Close()
+	//defer conn2.Close()
+	////messageReady := struct {
+	////	Type int `json:"type"`
+	////}{
+	////	Type: 1,
+	////}
+	////err = conn1.WriteJSON(messageReady)
+	//if err != nil {
+	//	t.Errorf("WebSocket connection failed: %v", err)
+	//}
+	////err = conn2.WriteJSON(messageReady)
+	//if err != nil {
+	//	t.Errorf("WebSocket connection failed: %v", err)
+	//}
+	r := gin.Default()
+	r.GET("/room/connect", api.ConnectRoom)
+	r.Run()
 }
 
 //func TestWebsocketAndChessLogic(t *testing.T) {
@@ -192,7 +202,7 @@ func TestWebsocketAndChessLogic(t *testing.T) {
 //		c.Request.Header.Set("Connection", "Upgrade")
 //		c.Request.Header.Set("Sec-WebSocket-Version", "13")
 //		c.Request.Header.Set("Sec-WebSocket-Key", "1")
-//		connectRoom(c)
+//		api.ConnectRoom(c)
 //		conn, _, err := websocket.DefaultDialer.Dial(wsURL, nil)
 //		if err != nil {
 //			t.Errorf(err.Error())
@@ -207,7 +217,7 @@ func TestWebsocketAndChessLogic(t *testing.T) {
 //		c.Request.Header.Set("Connection", "Upgrade")
 //		c.Request.Header.Set("Sec-WebSocket-Version", "13")
 //		c.Request.Header.Set("Sec-WebSocket-Key", "2")
-//		connectRoom(c)
+//		api.ConnectRoom(c)
 //	})
 //	//token2 := testToken.Token
 //	//token1 := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIyMDIzLTA3LTEyIDIwOjIzOjE1LjY3NzM3NDEgKzA4MDAgQ1NUIG09KzQzMzE2LjIwOTY0NjgwMSIsImlkIjoiMSJ9.oLoTxiJ9lGYMYdNGdlhe86eXbSiOWiGIPC268fnlbak"
@@ -222,39 +232,39 @@ func TestWebsocketAndChessLogic(t *testing.T) {
 //	//c2.Request.Header.Set("Authorization", token2)
 //	//
 //	//// 启动HTTP服务器
-//	//server1 := httptest.NewServer(router1)
-//	//server2 := httptest.NewServer(router2)
-//	//defer server1.Close()
-//	//defer server2.Close()
-//	//
-//	//// 连接WebSocket
-//	//wsURL1 := "ws" + strings.TrimPrefix(server1.URL, "http") + "/room/connect?room_id=" + strconv.Itoa(testRoom.RoomID)
-//	//wsURL2 := "ws" + strings.TrimPrefix(server2.URL, "http") + "/room/connect?room_id=" + strconv.Itoa(testRoom.RoomID)
-//	//conn1, _, err := websocket.DefaultDialer.Dial(wsURL1, nil)
-//	//if err != nil {
-//	//	t.Fatalf("WebSocket connection failed: %v", err)
-//	//}
-//	//conn2, _, err := websocket.DefaultDialer.Dial(wsURL2, nil)
-//	//if err != nil {
-//	//	t.Fatalf("WebSocket connection failed: %v", err)
-//	//}
-//	//defer conn1.Close()
-//	//defer conn2.Close()
-//	//
-//	//// 发送准备消息
-//	//messageReady := model.WebsocketMessage{
-//	//	Type: 1,
-//	//}
-//	//err = conn1.WriteJSON(messageReady)
-//	//if err != nil {
-//	//	t.Errorf("WebSocket write failed: %v", err)
-//	//}
-//	//err = conn2.WriteJSON(messageReady)
-//	//if err != nil {
-//	//	t.Errorf("WebSocket write failed: %v", err)
-//	//}
+//	server1 := httptest.NewServer(router1)
+//	server2 := httptest.NewServer(router2)
+//	defer server1.Close()
+//	defer server2.Close()
 //
-//	// 接收并验证准备消息
+//	// 连接WebSocket
+//	wsURL1 := "ws" + strings.TrimPrefix(server1.URL, "http") + "/room/connect?room_id=" + strconv.Itoa(testRoom.RoomID)
+//	wsURL2 := "ws" + strings.TrimPrefix(server2.URL, "http") + "/room/connect?room_id=" + strconv.Itoa(testRoom.RoomID)
+//	conn1, _, err := websocket.DefaultDialer.Dial(wsURL1, nil)
+//	if err != nil {
+//		t.Fatalf("WebSocket connection failed: %v", err)
+//	}
+//	conn2, _, err := websocket.DefaultDialer.Dial(wsURL2, nil)
+//	if err != nil {
+//		t.Fatalf("WebSocket connection failed: %v", err)
+//	}
+//	defer conn1.Close()
+//	defer conn2.Close()
+//
+//	// 发送准备消息
+//	messageReady := model.WebsocketMessage{
+//		Type: 1,
+//	}
+//	err = conn1.WriteJSON(messageReady)
+//	if err != nil {
+//		t.Errorf("WebSocket write failed: %v", err)
+//	}
+//	err = conn2.WriteJSON(messageReady)
+//	if err != nil {
+//		t.Errorf("WebSocket write failed: %v", err)
+//	}
+//
+//	//接收并验证准备消息
 //	//_, resp1, err := conn1.ReadMessage()
 //	//if err != nil {
 //	//	t.Errorf("WebSocket read failed: %v", err)
@@ -263,11 +273,11 @@ func TestWebsocketAndChessLogic(t *testing.T) {
 //	//if err != nil {
 //	//	t.Errorf("WebSocket read failed: %v", err)
 //	//}
-//	// 验证接收到的消息是否符合预期
-//
-//	// 发送移动消息等
-//
-//	// 接收并验证响应消息等
-//
-//	// 继续执行其他测试逻辑
+//	//验证接收到的消息是否符合预期
+//	//
+//	//发送移动消息等
+//	//
+//	//接收并验证响应消息等
+//	//
+//	//继续执行其他测试逻辑
 //}

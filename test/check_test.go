@@ -237,19 +237,19 @@ func Test_checkRookMove(t *testing.T) {
 		want1 string
 	}{
 		// TODO: Add test cases.
-		//{
-		//	name: "Valid rook move",
-		//	args: args{
-		//		x1:           1,
-		//		y1:           1,
-		//		x2:           8,
-		//		y2:           1,
-		//		color:        1,
-		//		checkerBoard: &model.Chess{},
-		//	},
-		//	want:  true,
-		//	want1: "Rook moves in a straight line.",
-		//},
+		{
+			name: "Valid rook move",
+			args: args{
+				x1:           0,
+				y1:           0,
+				x2:           0,
+				y2:           5,
+				color:        1,
+				checkerBoard: &model.Chess{},
+			},
+			want:  true,
+			want1: "Rook moves in a straight line.",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
