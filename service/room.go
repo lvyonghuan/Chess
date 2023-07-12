@@ -46,8 +46,8 @@ func generateRoomID() (id int) {
 // 特别抽象的初始化棋盘
 func initCheckerBoard(checkerBoard *model.Chess) {
 	for i := 0; i < 8; i++ {
-		//初始化走卒
-		if i == 1 || i == 6 {
+		switch i {
+		case 1, 6: //初始化走卒
 			for j := 0; j < 8; j++ {
 				checkerBoard.Checkerboard[i][j][0] = model.Pawn
 				if i == 1 {
@@ -56,29 +56,31 @@ func initCheckerBoard(checkerBoard *model.Chess) {
 					checkerBoard.Checkerboard[i][j][1] = model.Black
 				}
 			}
-		} else if i == 0 || i == 7 { //初始化特殊
+		case 0, 7: //初始化特殊
 			for j := 0; j < 8; j++ {
-				if j == 0 || j == 7 {
+				switch j {
+				case 0, 7:
 					checkerBoard.Checkerboard[i][j][0] = model.Rook
 					checkerBoard.Checkerboard[i][j][4] = 0
-				} else if j == 1 || j == 6 {
+				case 1, 6:
 					checkerBoard.Checkerboard[i][j][0] = model.Knight
-				} else if j == 2 || j == 5 {
+				case 2, 5:
 					checkerBoard.Checkerboard[i][j][0] = model.Bishop
-				} else if j == 3 {
+				case 3:
 					checkerBoard.Checkerboard[i][j][0] = model.Queen
-				} else if j == 4 {
+				case 4:
 					checkerBoard.Checkerboard[i][j][0] = model.King
 					checkerBoard.Checkerboard[i][j][4] = 0
 				}
+
 				if i == 0 {
 					checkerBoard.Checkerboard[i][j][1] = model.White
 				} else {
 					checkerBoard.Checkerboard[i][j][1] = model.Black
 				}
 			}
-		} else {
-			for j := 0; j < 8; j++ { //初始化空格
+		default: //初始化空格
+			for j := 0; j < 8; j++ {
 				checkerBoard.Checkerboard[i][j][0] = model.Void
 				checkerBoard.Checkerboard[i][j][1] = model.Void
 			}

@@ -23,15 +23,15 @@ func checkMove(c *model.Client, msg model.WebsocketMessage) (bool, string) {
 	}
 	switch piece {
 	case model.King:
-		return checkKingMove(x1, y1, x2, y2, color, checkerBoard)
+		return CheckKingMove(x1, y1, x2, y2, color, checkerBoard)
 	case model.Queen:
-		return checkQueenMove(x1, y1, x2, y2, color, checkerBoard)
+		return CheckQueenMove(x1, y1, x2, y2, color, checkerBoard)
 	case model.Rook:
-		return checkRookMove(x1, y1, x2, y2, color, checkerBoard)
+		return CheckRookMove(x1, y1, x2, y2, color, checkerBoard)
 	case model.Bishop:
-		return checkBishopMove(x1, y1, x2, y2, color, checkerBoard)
+		return CheckBishopMove(x1, y1, x2, y2, color, checkerBoard)
 	case model.Knight:
-		return checkKnightMove(x1, y1, x2, y2, color, checkerBoard)
+		return CheckKnightMove(x1, y1, x2, y2, color, checkerBoard)
 	case model.Pawn:
 
 	default:
@@ -43,7 +43,7 @@ func checkMove(c *model.Client, msg model.WebsocketMessage) (bool, string) {
 
 // 合法性检查大全
 // 国王检查
-func checkKingMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, string) {
+func CheckKingMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, string) {
 	var flag int
 	if color == model.White {
 		flag = 2
@@ -77,7 +77,7 @@ func checkKingMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, 
 	return true, ""
 }
 
-func checkQueenMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, string) {
+func CheckQueenMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, string) {
 	var flag = returnFlag(color)
 	dx := x2 - x1
 	dy := y2 - y1
@@ -120,7 +120,7 @@ func checkQueenMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool,
 	return true, ""
 }
 
-func checkRookMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, string) {
+func CheckRookMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, string) {
 	var flag = returnFlag(color)
 	dx := x2 - x1
 	dy := y2 - y1
@@ -166,7 +166,7 @@ func checkRookMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, 
 	return true, ""
 }
 
-func checkBishopMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, string) {
+func CheckBishopMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, string) {
 	var flag = returnFlag(color)
 	dx := x2 - x1
 	dy := y2 - y1
@@ -203,7 +203,7 @@ func checkBishopMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool
 	return true, ""
 }
 
-func checkKnightMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, string) {
+func CheckKnightMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, string) {
 	var flag = returnFlag(color)
 	dx := abs(x2 - x1)
 	dy := abs(y2 - y1)
@@ -227,7 +227,7 @@ func checkKnightMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool
 	return true, ""
 }
 
-func checkPawnMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, string) {
+func CheckPawnMove(x1, y1, x2, y2, color int, checkerBoard *model.Chess) (bool, string) {
 	var flag = returnFlag(color)
 	dx := x2 - x1
 	dy := y2 - y1

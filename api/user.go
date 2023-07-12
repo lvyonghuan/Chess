@@ -37,13 +37,13 @@ func Login(c *gin.Context) {
 }
 
 func RefreshToken(c *gin.Context) {
-	refreshToken := c.Query("refresh_token")
-	token, refreshToken, err := service.CheckRefreshTokenAndReturnToken(refreshToken)
+	refreshTokenStr := c.Query("refresh_token")
+	token, refreshTokenStr, err := service.CheckRefreshTokenAndReturnToken(refreshTokenStr)
 	if err != nil {
 		resps.NormErr(c, 400, err.Error())
 		log.Println(err)
 		return
 	}
-	log.Println(token, refreshToken)
-	resps.RespToken(c, token, refreshToken)
+	log.Println(token, refreshTokenStr)
+	resps.RespToken(c, token, refreshTokenStr)
 }
